@@ -1,0 +1,282 @@
+{
+  "name": "YT content tracker",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 1
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCEfEaGKGSxy8ZYIV1RWLbCQ"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -128
+      ],
+      "id": "1139d194-63c6-4483-90b5-8c1b2a7c318c",
+      "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2601f907-2551-4335-a6f8-e101e0e050d0",
+              "leftValue": "={{ DateTime.now().minus({hours: 5}) }}",
+              "rightValue": "={{ $json.isoDate }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        -208
+      ],
+      "id": "2140e63b-4618-40d1-9479-e4c0ca301d9c",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1nD9TRSvfM1N2HN-AFcv-QMoeO6BBVOyFYERQ0iQ59P0",
+          "mode": "list",
+          "cachedResultName": "United people, news",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nD9TRSvfM1N2HN-AFcv-QMoeO6BBVOyFYERQ0iQ59P0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nD9TRSvfM1N2HN-AFcv-QMoeO6BBVOyFYERQ0iQ59P0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Title": "={{ $json.title }}",
+            "Link": "={{ $json.link }}",
+            "Date": "={{ DateTime.fromISO($json.isoDate).toISODate() }}",
+            "Time": "={{ DateTime.fromISO($json.isoDate).toISOTime() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        480,
+        -208
+      ],
+      "id": "74c2ee6f-8800-4000-968d-f238704c3c2c",
+      "name": "Append row in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WIyfzURhHHQxwqu0",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "olanrewajuvictor2018@gmail.com",
+        "subject": "United news",
+        "message": "=Hello vic, check out the latest utd news:- {{ $json.Title }}\nlink:-{{ $json.Link }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        -208
+      ],
+      "id": "3f09a8df-c79b-4e4e-b351-ac09178a8d6c",
+      "name": "Send a message",
+      "webhookId": "8b99f5d6-9998-4ca1-ba3e-b86157daa3e4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "DFV5ABpGL8rF1FwD",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e524267d-5b3c-4e7f-a9d9-05013f8e8af8",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -48,
+        -128
+      ],
+      "id": "cde35e16-ceb7-4302-869d-3af6d51ed75c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "No new news."
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -48
+      ],
+      "id": "104f6e7b-4ad4-4f89-ab81-d9e018e05313",
+      "name": "Stop and Error"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "eb66fcde-6c03-40b7-884e-8fb90d8e8ed1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4e2f007eca6e0f28f66846bfd1e8bd334b5d0e2e1f0852002c89eb2153ffa04f"
+  },
+  "id": "1Bx1JbXCRdx7whkk",
+  "tags": []
+}
